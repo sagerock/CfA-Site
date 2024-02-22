@@ -11,6 +11,7 @@ import random
 from PIL import Image
 
 # When you are working locally set your api keys with this:
+# openai.api_key = os.getenv('OPENAI_API_KEY')
 # pinecone_api_key = os.getenv('PINECONE_API_KEY')
 
 # When you are uploading to Streamlit, set your keys like this:
@@ -19,11 +20,18 @@ openai.api_key = st.secrets["API_KEYS"]["openai"]
 
 pinecone.init(api_key=pinecone_api_key, environment="us-west4-gcp")
 
+
+logo = Image.open('images/logo.png')
+
+
+
 # random user picture
-user_av = 1
+# user_av = random.randint(0, 100)
+user_av = 5
 
 # random bott picture
-bott_av = 30
+# bott_av = random.randint(0, 100)
+bott_av = 10
 
 def randomize_array(arr):
     sampled_arr = []
@@ -33,10 +41,13 @@ def randomize_array(arr):
         arr.remove(elem)
     return sampled_arr
 
-st.set_page_config(page_title="Your Custom Database Driven Chatbot", page_icon="images/icon.png", layout="wide")
+st.set_page_config(page_title="Center For Anthroposophy AI Chatbot", page_icon="images/icon.png", layout="wide")
 
-st.header("Ask your resources questions. \n")
+st.header("Do you have a question about Center for Anthroposophy? I might be able to help. I'm the CfA AI Chatbot \n")
+st.image('images/icon.png', width=50)
 
+
+# st.header("Thank you for visiting the Rudolf Steiner AI Chatbot \n")
 
 # Define the name of the index and the dimensionality of the embeddings
 index_name = "sagerock"
@@ -52,20 +63,44 @@ pineconeindex = pinecone.Index(index_name)
 #######
 ######################################
 
-# Select the model you want to use.
 
 #COMPLETIONS_MODEL = "text-davinci-003"
 COMPLETIONS_MODEL = "gpt-3.5-turbo"
-#COMPLETIONS_MODEL = "gpt-4"
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 COMPLETIONS_API_PARAMS = {
     # We use temperature of 0.0 because it gives the most predictable, factual answer.
     "temperature": 0.0,  
-    "max_tokens": 4000,
+    "max_tokens": 400,
     "model": COMPLETIONS_MODEL,
 }
 
+
+main_url = "https://www.gutenberg.org/ebooks/author/26537"
+social_url ="https://www.instagram.com/springgardenwaldorfschool/"
+contact_url = "https://sgws.org/virtual-visit/"
+
+with st.sidebar:
+    st.image('images/logo.png', width=250)
+    st.markdown("---")
+
+    st.markdown("Welcome to the Center For Anthroposophy Chatbot! \n")
+    st.markdown(
+        
+"This chatbot has indexed over a dozen Rudolf Steiner books in both English and German. It is designed to provide information, insights, and answers based on Steiner's teachings and philosophy. \n"
+
+"You can ask questions or seek clarification on various topics related to Steiner's work, such as Anthroposophy, education, spirituality, biodynamics, and more. Please feel free to ask in either English or German, and the chatbot will respond accordingly. \n"
+
+"For example, you can ask: \n"
+"- What are the key concepts of Anthroposophy? \n"
+"- Tell me about Steiners approach to education. \n"
+"- Was gibt es über Biodynamik zu wissen? \n"
+
+"Please note that while this chatbot has extensive knowledge of Rudolf Steiner's writings, it may not have information beyond the knowledge cutoff of September 2021. Additionally, the chatbot's responses are generated based on patterns and examples from the indexed books, and it may not always provide the exact words or interpretations of Rudolf Steiner himself. \n"
+
+"Now, go ahead and ask any question you have about Rudolf Steiner or his teachings! \n"
+
+    )
 
 
 # MAIN FUNCTIONS
@@ -82,9 +117,11 @@ def num_tokens_from_string(string, encoding_name):
 
 
 def get_embedding(text, model):
-    result = client.embeddings.create(model=model,
-    input=text)
-    return result.data[0].embedding
+    result = openai.Embedding.create(
+      model=model,
+      input=text
+    )
+    return result["data"][0]["embedding"]
 
 
 
@@ -105,7 +142,7 @@ def construct_prompt_pinecone(question):
 
     #print(xq)
 
-    res = pineconeindex.query([xq], top_k=30, include_metadata=True, namespace="sgws-accreditation-3")
+    res = pineconeindex.query([xq], top_k=30, include_metadata=True, namespace="steiner")
 
     #print(res)
     # print(most_relevant_document_sections[:2])
@@ -137,13 +174,22 @@ def construct_prompt_pinecone(question):
     # Useful diagnostic information
     #print(f"Selected {len(chosen_sections)} document sections:")
     
-    header = """You are a helpful AI assistant. Use the following pieces of context to answer the question at the end. \n
-If you don't know the answer, just say you don't know. DO NOT try to make up an answer. \n
-If the question is not related to the context, politely respond that you are tuned to only answer questions that are related to the context. \n
-Also, please don't reference any charts or tables or images. People can't see them. \n
-If you don't know the answer please say that you are still new and not sure about that.  \n 
-You are an expert in understanding the Center For Anthroposopy, what the stand for and what their offerings are. \n
-You understand their complete website and are happy to answer any questions anyone may have about this . \n
+    header = """Welcome to the Rudolf Steiner Chatbot! \n
+
+This Rudolf Steiner chatbot has indexed over a dozen Rudolf Steiner books in both English and German. It is designed to provide information, insights, and answers based on Steiner's teachings and philosophy. \n
+
+You can ask questions or seek clarification on various topics related to Steiner's work, such as Anthroposophy, education, spirituality, biodynamics, and more. Please feel free to ask in either English or German, and the chatbot will respond accordingly. \n
+
+For example, you can ask: \n
+- "What are the key concepts of Anthroposophy?" \n
+- "Tell me about Steiner's approach to education." \n
+- "Was gibt es über Biodynamik zu wissen?" \n
+
+Please note that while this chatbot has extensive knowledge of Rudolf Steiner's writings, it may not have information beyond the knowledge cutoff of September 2021. Additionally, the chatbot's responses are generated based on patterns and examples from the indexed books, and it may not always provide the exact words or interpretations of Rudolf Steiner himself. \n
+
+Now, go ahead and ask any question you have about Rudolf Steiner or his teachings! \n
+
+Context: Rudolf Steiner \n
     """ 
     return header + "".join(chosen_sections) 
 
@@ -162,8 +208,10 @@ def summarize_past_conversation(content):
     prompt = "Summarize this discussion into a single paragraph keeping the topics mentioned: \n" + content
 
     try:
-        response = client.completions.create(prompt=prompt,
-        **APPEND_COMPLETION_PARAMS)
+        response = openai.Completion.create(
+                    prompt=prompt,
+                    **APPEND_COMPLETION_PARAMS
+                )
     except Exception as e:
         print("I'm afraid your question failed! This is the error: ")
         print(e)
@@ -194,12 +242,14 @@ def answer_query_with_context_pinecone(query):
     print(prompt)
     print("---------------------------------------------")
     try:
-        response = client.chat.completions.create(messages=[{"role": "system", "content": "You are a helpful AI who knows a great deal about Spring Garden Waldorf School Accrediation. You understand the complete document and are happy to answer any questions anyone may have about this document. \n"},
-                {"role": "user", "content": str(prompt)}],
-                # {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
-                # {"role": "user", "content": "Where was it played?"}
-                # ]
-        **COMPLETIONS_API_PARAMS)
+        response = openai.ChatCompletion.create(
+                    messages=[{"role": "system", "content": "You are a highly knowledgeable chatbot that knows a great deal about Rudolf Steiner."},
+                            {"role": "user", "content": str(prompt)}],
+                            # {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
+                            # {"role": "user", "content": "Where was it played?"}
+                            # ]
+                    **COMPLETIONS_API_PARAMS
+                )
     except Exception as e:
         print("I'm afraid your question failed! This is the error: ")
         print(e)
@@ -225,7 +275,7 @@ def clear_text():
 
 # We will get the user's input by calling the get_text function
 def get_text():
-    input_text = st.text_input("Input a question here! For example: \"How do I clean lab glassware?\". \n Also, I have no memory of previous questions!😊")
+    input_text = st.text_input("Input a question here! For example: \"Tell me about Rudolf Steiner\". \n Also, I have no memory of previous questions!😊")
     return input_text
 
 
@@ -245,5 +295,3 @@ if st.session_state['generated']:
     for i in range(len(st.session_state['generated'])-1, -1, -1):
         message(st.session_state["generated"][i],seed=bott_av , key=str(i))
         message(st.session_state['past'][i], is_user=True,avatar_style="personas",seed=user_av, key=str(i) + '_user')
-
-
