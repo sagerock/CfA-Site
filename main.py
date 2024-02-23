@@ -41,10 +41,10 @@ def randomize_array(arr):
         arr.remove(elem)
     return sampled_arr
 
-st.set_page_config(page_title="Center For Anthroposophy AI Chatbot", page_icon="images/icon.png", layout="wide")
+st.set_page_config(page_title="Center For Anthroposophy AI Chatbot", layout="wide")
 
-st.header("Do you have a question about Center for Anthroposophy? I might be able to help. I'm the CfA AI Chatbot \n")
-st.image('images/icon.png', width=50)
+st.header("Do you have a question about Center for Anthroposophy? I might be able to help. I'm the AI Chatbot for Center for Anthroposophy. \n")
+
 
 
 # st.header("Thank you for visiting the enter For Anthroposophy AI Chatbot \n")
