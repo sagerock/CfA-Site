@@ -210,7 +210,7 @@ def summarize_past_conversation(content):
 
 
 COMPLETIONS_API_PARAMS = {
-        "temperature": 0.0,
+        "temperature": 0.7,
         "max_tokens": 500,
         "model": COMPLETIONS_MODEL,
     }
