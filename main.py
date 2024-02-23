@@ -187,7 +187,7 @@ def summarize_past_conversation(content):
         "model": COMPLETIONS_MODEL,
     }
 
-    prompt = "Please respond to the question asked thoroughly and format it with markdown: \n" + content
+    prompt = "Please respond to the question asked thoroughly and format it with markdown: Only responde to questions based on the content in your database of Center for Anthroposophy. If you don't know the answer just let them know that you don't now and the person should reach out to the Center for Anthroposophy for more information.\n" + content
 
     try:
         response = openai.Completion.create(
