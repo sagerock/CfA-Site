@@ -239,15 +239,11 @@ def answer_query_with_context_pinecone(query):
 
     choices = response.get("choices", [])
     if len(choices) > 0:
-        # Extract the text from the response
-        answer_text = choices[0]["message"]["content"].strip(" \n")
-        
-        # Convert the text to Markdown format
-        markdown_text = f"```markdown\n{answer_text}\n```"
-        
-        return markdown_text
+        return choices[0]["message"]["content"].strip(" \n")
     else:
         return None
+
+
 
 # Storing the chat
 if 'generated' not in st.session_state:
