@@ -65,7 +65,7 @@ pineconeindex = pinecone.Index(index_name)
 
 
 #COMPLETIONS_MODEL = "text-davinci-003"
-COMPLETIONS_MODEL = "gpt-3.5-turbo"
+COMPLETIONS_MODEL = "gpt-4-0125-preview"
 EMBEDDING_MODEL = "text-embedding-ada-002"
 
 COMPLETIONS_API_PARAMS = {
