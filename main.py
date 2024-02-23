@@ -187,7 +187,7 @@ def summarize_past_conversation(content):
         "model": COMPLETIONS_MODEL,
     }
 
-    prompt = "Summarize this discussion into a single paragraph keeping the topics mentioned: \n" + content
+    prompt = "Please respond to the question asked thoroughly and in markdown: \n" + content
 
     try:
         response = openai.Completion.create(
