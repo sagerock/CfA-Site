@@ -272,11 +272,8 @@ if user_input:
     st.session_state.past.append(user_input)
     st.session_state.generated.append(output)
 
-# Display chatbot responses
+
 if st.session_state['generated']:
     for i in range(len(st.session_state['generated'])-1, -1, -1):
-        # Display chatbot response in Markdown format
-        st.markdown(st.session_state['generated'][i])
-        
-        # Display user input
-        message(st.session_state['past'][i], is_user=True, avatar_style="personas", seed=user_av, key=str(i) + '_user')
+        message(st.session_state["generated"][i],seed=bott_av , key=str(i))
+        message(st.session_state['past'][i], is_user=True,avatar_style="personas",seed=user_av, key=str(i) + '_user')
