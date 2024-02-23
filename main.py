@@ -219,10 +219,17 @@ COMPLETIONS_API_PARAMS = {
 def answer_query_with_context_pinecone(query):
     prompt = construct_prompt_pinecone(query) + "\n\n Q: " + query + "\n A:"
     
+    print("---------------------------------------------")
+    print("prompt:")
+    print(prompt)
+    print("---------------------------------------------")
     try:
         response = openai.ChatCompletion.create(
                     messages=[{"role": "system", "content": "You are a highly knowledgeable chatbot that knows a great deal about Center For Anthroposophy."},
                             {"role": "user", "content": str(prompt)}],
+                            # {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
+                            # {"role": "user", "content": "Where was it played?"}
+                            # ]
                     **COMPLETIONS_API_PARAMS
                 )
     except Exception as e:
@@ -232,16 +239,9 @@ def answer_query_with_context_pinecone(query):
 
     choices = response.get("choices", [])
     if len(choices) > 0:
-        # Extract the text from the response
-        answer_text = choices[0]["message"]["content"].strip(" \n")
-        
-        # Convert the text to Markdown format
-        markdown_text = f"```markdown\n{answer_text}\n```"
-        
-        return markdown_text
+        return choices[0]["message"]["content"].strip(" \n")
     else:
         return None
-
 
 
 
@@ -272,11 +272,8 @@ if user_input:
     st.session_state.past.append(user_input)
     st.session_state.generated.append(output)
 
-# Display chatbot responses
+
 if st.session_state['generated']:
     for i in range(len(st.session_state['generated'])-1, -1, -1):
-        # Display chatbot response in Markdown format without using st.markdown()
-        st.write_stream(st.session_state['generated'][i], unsafe_allow_html=True)
-        
-        # Display user input
-        message(st.session_state['past'][i], is_user=True, avatar_style="personas", seed=user_av, key=str(i) + '_user')
+        message(st.session_state["generated"][i],seed=bott_av , key=str(i))
+        message(st.session_state['past'][i], is_user=True,avatar_style="personas",seed=user_av, key=str(i) + '_user')
