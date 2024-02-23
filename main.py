@@ -225,7 +225,7 @@ def answer_query_with_context_pinecone(query):
     print("---------------------------------------------")
     try:
         response = openai.ChatCompletion.create(
-                    messages=[{"role": "system", "content": "You are a highly knowledgeable chatbot that knows a great deal about Center For Anthroposophy."},
+                    messages=[{"role": "system", "content": "You are a highly knowledgeable chatbot that knows a great deal about Center For Anthroposophy. Please only respond to questions from the information provided. If you don't know the answer just let the person know that you don't know the answer and they should reach out to the Center for Anthroposophy for more information."},
                             {"role": "user", "content": str(prompt)}],
                             # {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
                             # {"role": "user", "content": "Where was it played?"}
