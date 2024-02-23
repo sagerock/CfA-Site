@@ -47,7 +47,7 @@ st.header("Do you have a question about Center for Anthroposophy? I might be abl
 st.image('images/icon.png', width=50)
 
 
-# st.header("Thank you for visiting the Rudolf Steiner AI Chatbot \n")
+# st.header("Thank you for visiting the enter For Anthroposophy AI Chatbot \n")
 
 # Define the name of the index and the dimensionality of the embeddings
 index_name = "sagerock"
@@ -71,14 +71,13 @@ EMBEDDING_MODEL = "text-embedding-ada-002"
 COMPLETIONS_API_PARAMS = {
     # We use temperature of 0.0 because it gives the most predictable, factual answer.
     "temperature": 0.0,  
-    "max_tokens": 400,
+    "max_tokens": 4000,
     "model": COMPLETIONS_MODEL,
 }
 
 
-main_url = "https://www.gutenberg.org/ebooks/author/26537"
-social_url ="https://www.instagram.com/springgardenwaldorfschool/"
-contact_url = "https://sgws.org/virtual-visit/"
+main_url = "https://www.centerforanthroposphy.org"
+
 
 with st.sidebar:
     st.image('images/logo.png', width=250)
@@ -87,18 +86,10 @@ with st.sidebar:
     st.markdown("Welcome to the Center For Anthroposophy Chatbot! \n")
     st.markdown(
         
-"This chatbot has indexed over a dozen Rudolf Steiner books in both English and German. It is designed to provide information, insights, and answers based on Steiner's teachings and philosophy. \n"
+"This chatbot has the complete knowledge of the Center for Anthroposophy website. It is possible that some content that I know is out of date. Please double check with the Center after getting information from me. Thank you.\n"
 
-"You can ask questions or seek clarification on various topics related to Steiner's work, such as Anthroposophy, education, spirituality, biodynamics, and more. Please feel free to ask in either English or German, and the chatbot will respond accordingly. \n"
 
-"For example, you can ask: \n"
-"- What are the key concepts of Anthroposophy? \n"
-"- Tell me about Steiners approach to education. \n"
-"- Was gibt es über Biodynamik zu wissen? \n"
-
-"Please note that while this chatbot has extensive knowledge of Rudolf Steiner's writings, it may not have information beyond the knowledge cutoff of September 2021. Additionally, the chatbot's responses are generated based on patterns and examples from the indexed books, and it may not always provide the exact words or interpretations of Rudolf Steiner himself. \n"
-
-"Now, go ahead and ask any question you have about Rudolf Steiner or his teachings! \n"
+"Now, go ahead and ask any question you have about the Center for Anthroposophy! \n"
 
     )
 
@@ -142,7 +133,7 @@ def construct_prompt_pinecone(question):
 
     #print(xq)
 
-    res = pineconeindex.query([xq], top_k=30, include_metadata=True, namespace="steiner")
+    res = pineconeindex.query([xq], top_k=30, include_metadata=True, namespace="cfa-site")
 
     #print(res)
     # print(most_relevant_document_sections[:2])
@@ -174,22 +165,13 @@ def construct_prompt_pinecone(question):
     # Useful diagnostic information
     #print(f"Selected {len(chosen_sections)} document sections:")
     
-    header = """Welcome to the Rudolf Steiner Chatbot! \n
+    header = """W"Welcome to the Center For Anthroposophy Chatbot! \n
 
-This Rudolf Steiner chatbot has indexed over a dozen Rudolf Steiner books in both English and German. It is designed to provide information, insights, and answers based on Steiner's teachings and philosophy. \n
+This chatbot has the complete knowledge of the Center for Anthroposophy website. It is possible that some content that I know is out of date. Please double check with the Center after getting information from me. Thank you.\n"
 
-You can ask questions or seek clarification on various topics related to Steiner's work, such as Anthroposophy, education, spirituality, biodynamics, and more. Please feel free to ask in either English or German, and the chatbot will respond accordingly. \n
+"Now, go ahead and ask any question you have about the Center for Anthroposophy! \n
 
-For example, you can ask: \n
-- "What are the key concepts of Anthroposophy?" \n
-- "Tell me about Steiner's approach to education." \n
-- "Was gibt es über Biodynamik zu wissen?" \n
-
-Please note that while this chatbot has extensive knowledge of Rudolf Steiner's writings, it may not have information beyond the knowledge cutoff of September 2021. Additionally, the chatbot's responses are generated based on patterns and examples from the indexed books, and it may not always provide the exact words or interpretations of Rudolf Steiner himself. \n
-
-Now, go ahead and ask any question you have about Rudolf Steiner or his teachings! \n
-
-Context: Rudolf Steiner \n
+Context: Center for Anthroposophy \n
     """ 
     return header + "".join(chosen_sections) 
 
@@ -243,7 +225,7 @@ def answer_query_with_context_pinecone(query):
     print("---------------------------------------------")
     try:
         response = openai.ChatCompletion.create(
-                    messages=[{"role": "system", "content": "You are a highly knowledgeable chatbot that knows a great deal about Rudolf Steiner."},
+                    messages=[{"role": "system", "content": "You are a highly knowledgeable chatbot that knows a great deal about Center For Anthroposophy."},
                             {"role": "user", "content": str(prompt)}],
                             # {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
                             # {"role": "user", "content": "Where was it played?"}
@@ -275,7 +257,7 @@ def clear_text():
 
 # We will get the user's input by calling the get_text function
 def get_text():
-    input_text = st.text_input("Input a question here! For example: \"Tell me about Rudolf Steiner\". \n Also, I have no memory of previous questions!😊")
+    input_text = st.text_input("Input a question here! For example: \"Tell me about the Center for Anthroposophy\". \n Also, I have no memory of previous questions!😊")
     return input_text
 
 
