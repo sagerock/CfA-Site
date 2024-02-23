@@ -276,7 +276,7 @@ if user_input:
 if st.session_state['generated']:
     for i in range(len(st.session_state['generated'])-1, -1, -1):
         # Display chatbot response in Markdown format without using st.markdown()
-        st.write(st.session_state['generated'][i], unsafe_allow_html=True)
+        st.markdown(st.session_state['generated'][i], unsafe_allow_html=True)
         
         # Display user input
         message(st.session_state['past'][i], is_user=True, avatar_style="personas", seed=user_av, key=str(i) + '_user')
