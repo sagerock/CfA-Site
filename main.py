@@ -264,18 +264,31 @@ def get_text():
 
 user_input = get_text()
 
-if user_input:
-    output = answer_query_with_context_pinecone(user_input)
+def answer_query_with_context_pinecone(query):
+    prompt = construct_prompt_pinecone(query) + "\n\n Q: " + query + "\n A:"
+    
+    try:
+        response = openai.ChatCompletion.create(
+                    messages=[{"role": "system", "content": "You are a highly knowledgeable chatbot that knows a great deal about Center For Anthroposophy."},
+                            {"role": "user", "content": str(prompt)}],
+                    **COMPLETIONS_API_PARAMS
+                )
+    except Exception as e:
+        print("I'm afraid your question failed! This is the error: ")
+        print(e)
+        return None
 
-    # store the output 
-    st.session_state.past.append(user_input)
-    st.session_state.generated.append(output)
-
-# Display chatbot responses
-if st.session_state['generated']:
-    for i in range(len(st.session_state['generated'])-1, -1, -1):
-        # Display chatbot response in Markdown format
-        st.markdown(st.session_state['generated'][i])
+    choices = response.get("choices", [])
+    if len(choices) > 0:
+        # Extract the text from the response
+        answer_text = choices[0]["message"]["content"].strip(" \n")
         
-        # Display user input
-        message(st.session_state['past'][i], is_user=True, avatar_style="personas", seed=user_av, key=str(i) + '_user')
+        # Convert the text to Markdown format
+        markdown_text = f"```markdown\n{answer_text}\n```"
+        
+        # Replace Markdown bold syntax with HTML bold tags
+        markdown_text = markdown_text.replace("**", "<b>").replace("**", "</b>")
+        
+        return markdown_text
+    else:
+        return None
